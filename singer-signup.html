@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DS 歌手報名</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+:root {
+  --ink: #1a1208;
+  --paper: #f5f0e8;
+  --paper2: #ece6d8;
+  --gold: #b8860b;
+  --gold-light: #d4a843;
+  --red: #8b2020;
+  --text: #2c2416;
+  --muted: #8a7d68;
+  --border: #d4c9b0;
+  --white: #faf7f2;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--paper);
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  min-height: 100vh;
+}
+
+
+/* HERO */
+.hero {
+  background: var(--ink);
+  padding: 48px 24px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(184,134,11,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(139,32,32,0.08) 0%, transparent 60%);
+}
+
+.hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 6vw, 52px);
+  color: var(--paper);
+  line-height: 1.15;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.hero-sub {
+  color: #8a7d68;
+  font-size: 13px;
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+.divider {
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+  margin: 16px auto;
+  opacity: 0.5;
+}
+
+/* NOTICE */
+.notice {
+  background: var(--white);
+  border-left: 3px solid var(--gold);
+  margin: 0 auto;
+  max-width: 640px;
+  padding: 16px 20px;
+  margin-top: 32px;
+  margin-bottom: 0;
+}
+
+.notice p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.notice p + p { margin-top: 6px; }
+
+/* FORM WRAPPER */
+.form-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* FIELD */
+.field {
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.4s forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.field:nth-child(1) { animation-delay: 0.05s; }
+.field:nth-child(2) { animation-delay: 0.1s; }
+.field:nth-child(3) { animation-delay: 0.15s; }
+.field:nth-child(4) { animation-delay: 0.2s; }
+.field:nth-child(5) { animation-delay: 0.25s; }
+.field:nth-child(6) { animation-delay: 0.3s; }
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+label .req {
+  color: var(--red);
+  margin-left: 3px;
+}
+
+label .hint {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 6px;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+textarea {
+  width: 100%;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  color: var(--ink);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 15px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--gold);
+  border-bottom-color: var(--gold);
+  background: #fffef9;
+}
+
+input.error, textarea.error {
+  border-color: var(--red);
+  border-bottom-color: var(--red);
+}
+
+.error-msg {
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 5px;
+  display: none;
+}
+
+.error-msg.show { display: block; }
+
+textarea { resize: vertical; min-height: 80px; }
+
+/* CALENDAR */
+.calendar-wrap {
+  background: var(--white);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.cal-header {
+  background: var(--ink);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--paper);
+}
+
+.cal-month-controls { display: flex; gap: 8px; align-items: center; }
+
+.cal-nav {
+  background: transparent;
+  border: 1px solid #3a3020;
+  color: #c8b99a;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.cal-nav:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}
+
+.cal-grid {
+  padding: 16px;
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+}
+
+.cal-wd {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding: 4px 0;
+}
+
+.cal-wd.sun { color: #c0392b; }
+.cal-wd.sat { color: #2471a3; }
+
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  border: 1px solid transparent;
+  cursor: default;
+  position: relative;
+  gap: 2px;
+  transition: all 0.12s;
+  min-height: 44px;
+}
+
+.cal-day.empty { background: transparent; }
+
+.cal-day.past {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.cal-day.available {
+  cursor: pointer;
+  background: var(--paper2);
+  border-color: var(--border);
+}
+
+.cal-day.available:hover {
+  border-color: var(--gold);
+  background: #f0e8d0;
+}
+
+.cal-day.available.has-selected {
+  background: rgba(184,134,11,0.12);
+  border-color: var(--gold);
+}
+
+.day-num {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.day-slots {
+  display: flex;
+  gap: 2px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.12s;
+}
+
+.dot.s1 { background: var(--border); }
+.dot.s2 { background: var(--border); }
+.dot.s3 { background: var(--border); }
+.dot.s4 { background: var(--border); }
+
+.cal-day.available .dot { background: var(--muted); opacity: 0.4; }
+
+/* SLOT PICKER POPUP */
+.slot-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(26,18,8,0.6);
+  backdrop-filter: blur(2px);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.slot-popup.show { display: flex; }
+
+.slot-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 360px;
+  overflow: hidden;
+  animation: popIn 0.2s ease-out;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.slot-box-header {
+  background: var(--ink);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.slot-box-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--paper);
+}
+
+.slot-close {
+  background: transparent;
+  border: none;
+  color: #8a7d68;
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+}
+
+.slot-options {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.slot-option {
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.15s;
+  background: var(--paper2);
+}
+
+.slot-option:hover {
+  border-color: var(--gold);
+  background: #f0e8d0;
+}
+
+.slot-option.selected {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}
+
+.slot-check {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.slot-option.selected .slot-check {
+  background: #000;
+  border-color: #000;
+  color: var(--gold);
+}
+
+.slot-time-text { font-size: 14px; }
+.slot-time-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.slot-option.selected .slot-time-sub { color: rgba(0,0,0,0.6); }
+
+.slot-done {
+  margin: 0 18px 16px;
+  background: var(--ink);
+  color: var(--gold-light);
+  border: none;
+  padding: 12px;
+  width: calc(100% - 0px);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.slot-done:hover { background: var(--gold); color: #000; }
+
+/* SELECTED SLOTS DISPLAY */
+.selected-slots {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.slot-tag {
+  background: var(--ink);
+  color: var(--gold-light);
+  font-size: 11px;
+  padding: 4px 10px 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+
+.slot-tag-remove {
+  background: transparent;
+  border: none;
+  color: #6a5d4a;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  transition: color 0.1s;
+}
+
+.slot-tag-remove:hover { color: var(--red); }
+
+.no-slots-msg {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 10px 0;
+  font-style: italic;
+}
+
+/* SUBMIT */
+.submit-wrap {
+  margin-top: 36px;
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+}
+
+.submit-btn {
+  width: 100%;
+  background: var(--ink);
+  color: var(--gold-light);
+  border: none;
+  padding: 16px;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.submit-btn:hover::after { transform: translateX(0); }
+.submit-btn:hover { color: #000; }
+.submit-btn span { position: relative; z-index: 1; }
+
+.submit-note {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* SUCCESS */
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.success-screen.show { display: block; }
+.form-wrap.hidden { display: none; }
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.success-screen h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.success-screen p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* ADMIN PANEL */
+.admin-panel {
+  display: none;
+  background: var(--ink);
+  color: var(--paper);
+  min-height: calc(100vh - 33px);
+  padding: 32px 24px;
+}
+
+.admin-panel.show { display: block; }
+
+.admin-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--gold-light);
+  margin-bottom: 24px;
+}
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-box {
+  background: #1e1a12;
+  border: 1px solid #2a2416;
+  padding: 16px;
+}
+
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: var(--gold-light);
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #6a5d4a;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.schedule-date-block {
+  background: #161208;
+  border: 1px solid #2a2416;
+  overflow: hidden;
+}
+
+.schedule-date-header {
+  background: #1e1a12;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #2a2416;
+}
+
+.schedule-date-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--gold-light);
+}
+
+.schedule-day-en {
+  font-size: 10px;
+  color: #6a5d4a;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.schedule-slots {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.schedule-slot-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 0;
+  background: #1a160e;
+  border: 1px solid #2a2416;
+}
+
+.schedule-slot-time {
+  padding: 8px 12px;
+  font-size: 10px;
+  color: #6a5d4a;
+  font-family: 'Noto Sans TC', sans-serif;
+  border-right: 1px solid #2a2416;
+  display: flex;
+  align-items: center;
+}
+
+.schedule-slot-names {
+  padding: 6px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+  min-height: 36px;
+}
+
+.singer-tag {
+  background: #2a2416;
+  border: 1px solid #3a3020;
+  color: #c8b99a;
+  font-size: 12px;
+  padding: 3px 10px;
+}
+
+.admin-export-bar {
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #2a2416;
+}
+
+.admin-export-btn {
+  background: transparent;
+  border: 1px solid #3a3020;
+  color: var(--gold-light);
+  padding: 10px 20px;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'Noto Sans TC', sans-serif;
+  letter-spacing: 0.05em;
+  transition: all 0.15s;
+}
+
+.admin-export-btn:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}
+
+.admin-month-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #1a160e;
+  border: 1px solid #2a2416;
+}
+
+.admin-month-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--gold-light);
+  min-width: 120px;
+  text-align: center;
+}
+
+.month-nav {
+  background: transparent;
+  border: 1px solid #3a3020;
+  color: #c8b99a;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.month-nav:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--ink);
+  color: var(--gold-light);
+  border: 1px solid var(--gold);
+  padding: 10px 24px;
+  font-size: 13px;
+  opacity: 0;
+  transition: all 0.25s;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* month label in form */
+.cal-month-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  color: var(--paper);
+}
+</style>
+</head>
+<body>
+
+
+
+
+<!-- SINGER FORM VIEW -->
+<div id="formView">
+  <div class="hero">
+    <div class="hero-eyebrow">DS · 歌手報名</div>
+    <h1><em id="heroMonth">2026 四月</em><br>歌手報名表單</h1>
+    <div class="divider"></div>
+    <p class="hero-sub">
+      歡迎大家踴躍報名 ヾ(*°▽°*)ノ<br>
+      報名截止：每月 <strong id="deadlineLabel">25</strong> 號，班表預計 <strong id="releaseLabel">26</strong> 號發佈
+    </p>
+    <div class="notice" style="background:rgba(255,255,255,0.04);border-color:rgba(184,134,11,0.4);margin:20px auto 0;">
+      <p style="color:#8a7d68">
+        1. 若演出當天有問題請通知小編<br>
+        2. 四月週日到週三可報名的時間是 21:00 / 22:15，週四 21:00，週五六 20:30 / 21:30 / 22:30 / 23:30
+      </p>
+    </div>
+  </div>
+
+  <div class="form-wrap" id="mainForm">
+    <!-- 1. 姓名 -->
+    <div class="field">
+      <label>藝名／姓名 <span class="req">*</span></label>
+      <input type="text" id="f-name" placeholder="例：Debby" />
+      <div class="error-msg" id="err-name">請填寫藝名或姓名</div>
+    </div>
+
+    <!-- 2. 手機 -->
+    <div class="field">
+      <label>手機號碼 <span class="req">*</span></label>
+      <input type="tel" id="f-phone" placeholder="09xx-xxxxxx" />
+      <div class="error-msg" id="err-phone">請填寫有效的手機號碼</div>
+    </div>
+
+    <!-- 3. IG -->
+    <div class="field">
+      <label>IG 帳號 <span class="req">*</span> <span class="hint">請填完整帳號（含 @）</span></label>
+      <input type="text" id="f-ig" placeholder="@your_account" />
+      <div class="error-msg" id="err-ig">請填寫 IG 帳號</div>
+    </div>
+
+    <!-- 4. 影片連結 -->
+    <div class="field">
+      <label>演出影片連結 <span class="req">*</span> <span class="hint">請確保連結可開啟</span></label>
+      <input type="url" id="f-video" placeholder="https://..." />
+      <div class="error-msg" id="err-video">請填寫影片連結</div>
+    </div>
+
+    <!-- 5. 可演出時段 -->
+    <div class="field">
+      <label>可演出時段 <span class="req">*</span> <span class="hint">點選日期選擇時段</span></label>
+
+      <div class="calendar-wrap">
+        <div class="cal-header">
+          <span class="cal-month-label" id="calMonthLabel">2026年4月</span>
+          <div class="cal-month-controls">
+            <button class="cal-nav" onclick="changeCalMonth(-1)">‹</button>
+            <button class="cal-nav" onclick="changeCalMonth(1)">›</button>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-weekdays">
+            <div class="cal-wd sun">日</div>
+            <div class="cal-wd">一</div>
+            <div class="cal-wd">二</div>
+            <div class="cal-wd">三</div>
+            <div class="cal-wd">四</div>
+            <div class="cal-wd">五</div>
+            <div class="cal-wd sat">六</div>
+          </div>
+          <div class="cal-days" id="calDays"></div>
+        </div>
+      </div>
+
+      <div class="selected-slots" id="selectedSlotsList">
+        <p class="no-slots-msg">尚未選擇任何時段</p>
+      </div>
+      <div class="error-msg" id="err-slots">請至少選擇一個時段</div>
+    </div>
+
+    <!-- 6. 宣傳照備註 -->
+    <div class="field">
+      <label>備註 <span class="hint">（選填）宣傳照說明或其他需求</span></label>
+      <textarea id="f-note" placeholder="例如：我有吉他演出照片，稍後會傳 IG 私訊給小編"></textarea>
+    </div>
+
+    <div class="submit-wrap">
+      <button class="submit-btn" onclick="submitForm()"><span>送出報名 →</span></button>
+      <p class="submit-note">送出後如需修改請私訊 IG 小編<br>班表預計 <span id="releaseLabel2">26</span> 號於 IG 公告</p>
+    </div>
+  </div>
+
+  <div class="success-screen" id="successScreen">
+    <span class="success-icon">🎵</span>
+    <h2>報名成功！</h2>
+    <p id="successMsg">感謝你的報名，我們會在班表發布時於 IG 公告<br>若有任何問題請私訊小編 ♪</p>
+    <br><br>
+    <button class="submit-btn" style="max-width:200px;margin:0 auto;display:block" onclick="resetForm()"><span>再次報名</span></button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-title">管理後台 · Admin</div>
+
+  <div class="admin-month-ctrl">
+    <button class="month-nav" onclick="changeAdminMonth(-1)">‹</button>
+    <span class="admin-month-label" id="adminMonthDisplay">2026年4月</span>
+    <button class="month-nav" onclick="changeAdminMonth(1)">›</button>
+    <span style="font-size:11px;color:#6a5d4a;margin-left:8px">← 切換查看月份</span>
+  </div>
+
+  <div class="admin-summary">
+    <div class="stat-box">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">報名總人數</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statDays">0</div>
+      <div class="stat-label">有人可排天數</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" id="statSlots">0</div>
+      <div class="stat-label">總時段數</div>
+    </div>
+  </div>
+
+  <div class="schedule-grid" id="adminScheduleGrid">
+    <p style="color:#6a5d4a;font-size:13px">尚無報名資料</p>
+  </div>
+
+  <div class="admin-export-bar">
+    <button class="admin-export-btn" onclick="adminCopyAll()">複製完整排班資料</button>
+    <button class="admin-export-btn" onclick="adminCopyCSV()">複製 CSV 格式</button>
+    <button class="admin-export-btn" onclick="clearMonthData()">清除本月資料</button>
+  </div>
+</div>
+
+<!-- SLOT PICKER POPUP -->
+<div class="slot-popup" id="slotPopup" onclick="closePopupIfOutside(event)">
+  <div class="slot-box">
+    <div class="slot-box-header">
+      <h3 id="popupDateLabel">選擇時段</h3>
+      <button class="slot-close" onclick="closePopup()">×</button>
+    </div>
+    <div class="slot-options" id="slotOptions"></div>
+    <button class="slot-done" onclick="closePopup()">確認</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────
+// 週日〜週三
+const SLOTS_SUN_WED = [
+  { key: 'A', label: '21:00–22:00', sub: '首場' },
+  { key: 'B', label: '22:15–23:15', sub: '第二場' },
+];
+// 週四
+const SLOTS_THU = [
+  { key: 'A', label: '21:00–22:00', sub: '唯一場次' },
+];
+// 週五〜週六
+const SLOTS_FRI_SAT = [
+  { key: 'A', label: '20:30–21:30', sub: '首場' },
+  { key: 'B', label: '21:30–22:30', sub: '第二場' },
+  { key: 'C', label: '22:30–23:30', sub: '第三場' },
+  { key: 'D', label: '23:30–00:30', sub: '最終場' },
+];
+
+function getSlotsForDay(dayOfWeek) {
+  if (dayOfWeek === 4) return SLOTS_THU;           // 週四
+  if (dayOfWeek === 5 || dayOfWeek === 6) return SLOTS_FRI_SAT; // 週五六
+  return SLOTS_SUN_WED;                             // 週日〜週三
+}
+
+const DAY_NAMES_ZH = ['日','一','二','三','四','五','六'];
+const DAY_NAMES_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+// ─── STATE ────────────────────────────────
+let calYear, calMonth;  // currently displayed calendar month
+let adminYear, adminMonth;
+let selectedSlots = {}; // { "2026-04-01": ["A","B"] }
+let currentPickDay = null;
+let submissions = {}; // key: "YYYY-MM" → array of entries
+
+function initMonths() {
+  const now = new Date();
+  // Default to next month
+  let y = now.getFullYear(), m = now.getMonth() + 2;
+  if (m > 12) { m = 1; y++; }
+  calYear = y; calMonth = m;
+  adminYear = y; adminMonth = m;
+  updateLabels();
+  renderCalendar();
+  renderAdmin();
+}
+
+function updateLabels() {
+  const monthZH = ['一','二','三','四','五','六','七','八','九','十','十一','十二'];
+  const label = `${calYear}年${calMonth}月`;
+  const heroLabel = `${calYear} ${monthZH[calMonth-1]}月`;
+  document.getElementById('calMonthLabel').textContent = label;
+  document.getElementById('heroMonth').textContent = heroLabel;
+
+  document.getElementById('adminMonthDisplay').textContent = `${adminYear}年${adminMonth}月`;
+}
+
+// ─── CALENDAR ─────────────────────────────
+function changeCalMonth(d) {
+  calMonth += d;
+  if (calMonth > 12) { calMonth = 1; calYear++; }
+  if (calMonth < 1) { calMonth = 12; calYear--; }
+  updateLabels();
+  renderCalendar();
+}
+
+function changeAdminMonth(d) {
+  adminMonth += d;
+  if (adminMonth > 12) { adminMonth = 1; adminYear++; }
+  if (adminMonth < 1) { adminMonth = 12; adminYear--; }
+  document.getElementById('adminMonthDisplay').textContent = `${adminYear}年${adminMonth}月`;
+  renderAdmin();
+}
+
+function renderCalendar() {
+  const grid = document.getElementById('calDays');
+  const firstDay = new Date(calYear, calMonth - 1, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+
+  let html = '';
+
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div class="cal-day empty"></div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(calYear, calMonth - 1, d);
+    const dayOfWeek = date.getDay();
+    const dateKey = `${calYear}-${String(calMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const sel = selectedSlots[dateKey] || [];
+    const hasSel = sel.length > 0;
+    const slots = getSlotsForDay(dayOfWeek);
+    
+    const dotHtml = slots.map((s, i) => {
+      const filled = sel.includes(s.key) ? `style="background:var(--gold);opacity:1"` : '';
+      return `<div class="dot s${i+1}" ${filled}></div>`;
+    }).join('');
+
+    const classes = ['cal-day'];
+    if (isPast) classes.push('past');
+    else classes.push('available');
+    if (hasSel) classes.push('has-selected');
+    
+    const sunClass = dayOfWeek === 0 ? 'color:#c0392b' : dayOfWeek === 6 ? 'color:#2471a3' : '';
+
+    html += `<div class="${classes.join(' ')}" onclick="${isPast ? '' : `openSlotPicker('${dateKey}', ${d}, ${dayOfWeek})`}">
+      <span class="day-num" style="${sunClass}">${d}</span>
+      <div class="day-slots">${dotHtml}</div>
+    </div>`;
+  }
+
+  grid.innerHTML = html;
+}
+
+// ─── SLOT PICKER ──────────────────────────
+function openSlotPicker(dateKey, day, dayOfWeek) {
+  currentPickDay = dateKey;
+  const slots = getSlotsForDay(dayOfWeek);
+  const sel = selectedSlots[dateKey] || [];
+  const dayZH = DAY_NAMES_ZH[dayOfWeek];
+  
+  document.getElementById('popupDateLabel').textContent = 
+    `${calMonth}月${day}日（${dayZH}）`;
+
+  const optHtml = slots.map(s => {
+    const isSel = sel.includes(s.key);
+    return `<div class="slot-option ${isSel ? 'selected' : ''}" onclick="toggleSlot('${s.key}', this)">
+      <div class="slot-check">${isSel ? '✓' : ''}</div>
+      <div>
+        <div class="slot-time-text">${s.label}</div>
+        <div class="slot-time-sub">${s.sub}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('slotOptions').innerHTML = optHtml;
+  document.getElementById('slotPopup').classList.add('show');
+}
+
+function toggleSlot(key, el) {
+  if (!currentPickDay) return;
+  if (!selectedSlots[currentPickDay]) selectedSlots[currentPickDay] = [];
+  const arr = selectedSlots[currentPickDay];
+  const idx = arr.indexOf(key);
+  if (idx === -1) {
+    arr.push(key);
+    el.classList.add('selected');
+    el.querySelector('.slot-check').textContent = '✓';
+  } else {
+    arr.splice(idx, 1);
+    el.classList.remove('selected');
+    el.querySelector('.slot-check').textContent = '';
+  }
+  if (arr.length === 0) delete selectedSlots[currentPickDay];
+}
+
+function closePopup() {
+  document.getElementById('slotPopup').classList.remove('show');
+  renderCalendar();
+  renderSelectedSlots();
+  currentPickDay = null;
+}
+
+function closePopupIfOutside(e) {
+  if (e.target === document.getElementById('slotPopup')) closePopup();
+}
+
+function renderSelectedSlots() {
+  const container = document.getElementById('selectedSlotsList');
+  const keys = Object.keys(selectedSlots).sort();
+  
+  if (!keys.length) {
+    container.innerHTML = '<p class="no-slots-msg">尚未選擇任何時段</p>';
+    return;
+  }
+
+  let html = '';
+  for (const dateKey of keys) {
+    const [y, m, d] = dateKey.split('-').map(Number);
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    const slots = getSlotsForDay(dayOfWeek);
+    const dayZH = DAY_NAMES_ZH[dayOfWeek];
+    
+    for (const key of (selectedSlots[dateKey] || [])) {
+      const slot = slots.find(s => s.key === key);
+      if (!slot) continue;
+      const label = `${m}/${d}(${dayZH}) ${slot.label}`;
+      html += `<span class="slot-tag">${label}
+        <button class="slot-tag-remove" onclick="removeSlot('${dateKey}','${key}')">×</button>
+      </span>`;
+    }
+  }
+  container.innerHTML = html;
+}
+
+function removeSlot(dateKey, key) {
+  if (!selectedSlots[dateKey]) return;
+  selectedSlots[dateKey] = selectedSlots[dateKey].filter(k => k !== key);
+  if (!selectedSlots[dateKey].length) delete selectedSlots[dateKey];
+  renderCalendar();
+  renderSelectedSlots();
+}
+
+// ─── FORM SUBMIT ──────────────────────────
+function validateField(id, errId, check) {
+  const val = document.getElementById(id).value.trim();
+  const valid = check(val);
+  document.getElementById(id).classList.toggle('error', !valid);
+  document.getElementById(errId).classList.toggle('show', !valid);
+  return valid;
+}
+
+// ⬇️ 把你的 Google Apps Script 網址貼在這裡
+const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';
+
+async function submitForm() {
+  const nameOk = validateField('f-name', 'err-name', v => v.length > 0);
+  const phoneOk = validateField('f-phone', 'err-phone', v => /^09\d{8}$/.test(v.replace(/[-\s]/g,'')));
+  const igOk = validateField('f-ig', 'err-ig', v => v.length > 0);
+  const videoOk = validateField('f-video', 'err-video', v => v.startsWith('http'));
+  
+  const hasSlots = Object.keys(selectedSlots).length > 0;
+  document.getElementById('err-slots').classList.toggle('show', !hasSlots);
+  
+  if (!nameOk || !phoneOk || !igOk || !videoOk || !hasSlots) {
+    const firstErr = document.querySelector('.error-msg.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // 整理時段文字
+  const slotTexts = [];
+  for (const [dk, keys] of Object.entries(selectedSlots)) {
+    const [y, m, d] = dk.split('-').map(Number);
+    const dow = new Date(y, m - 1, d).getDay();
+    const slotDefs = getSlotsForDay(dow);
+    const dayZH = DAY_NAMES_ZH[dow];
+    for (const k of keys) {
+      const s = slotDefs.find(x => x.key === k);
+      if (s) slotTexts.push(`${m}/${d}(${dayZH}) ${s.label}`);
+    }
+  }
+
+  const entry = {
+    name: document.getElementById('f-name').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    ig: document.getElementById('f-ig').value.trim(),
+    video: document.getElementById('f-video').value.trim(),
+    slots: slotTexts.join(' | '),
+    note: document.getElementById('f-note').value.trim(),
+  };
+
+  // 送出按鈕 loading 狀態
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.querySelector('span').textContent = '送出中…';
+
+  try {
+    // 送到 Google Sheets
+    if (APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL') {
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Apps Script 需要 no-cors
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry),
+      });
+    }
+
+    // 也存在本地（備份用）
+    const monthKey = `${calYear}-${String(calMonth).padStart(2,'0')}`;
+    if (!submissions[monthKey]) submissions[monthKey] = [];
+    submissions[monthKey].push({ ...entry, slots: JSON.parse(JSON.stringify(selectedSlots)) });
+    try { localStorage.setItem('ds_submissions', JSON.stringify(submissions)); } catch(e) {}
+
+    // 成功畫面
+    document.getElementById('mainForm').classList.add('hidden');
+    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('successMsg').textContent =
+      `${entry.name}，感謝你的報名！\n我們會在班表發布時於 IG 公告 ♪`;
+
+  } catch(err) {
+    showToast('送出失敗，請截圖聯繫小編');
+    btn.disabled = false;
+    btn.querySelector('span').textContent = '送出報名 →';
+  }
+}
+
+function resetForm() {
+  document.getElementById('mainForm').classList.remove('hidden');
+  document.getElementById('successScreen').classList.remove('show');
+  ['f-name','f-phone','f-ig','f-video','f-note'].forEach(id => {
+    document.getElementById(id).value = '';
+    document.getElementById(id).classList.remove('error');
+  });
+  selectedSlots = {};
+  renderCalendar();
+  renderSelectedSlots();
+}
+
+// ─── ADMIN ────────────────────────────────
+function toggleAdmin(show) {
+  document.getElementById('formView').style.display = show ? 'none' : 'block';
+  document.getElementById('adminPanel').classList.toggle('show', show);
+
+  if (show) renderAdmin();
+}
+
+function renderAdmin() {
+  const monthKey = `${adminYear}-${String(adminMonth).padStart(2,'0')}`;
+  const entries = submissions[monthKey] || [];
+  
+  document.getElementById('statTotal').textContent = entries.length;
+
+  // Build schedule map: dateKey → slotKey → [names]
+  const schedMap = {};
+  for (const e of entries) {
+    for (const [dk, slotKeys] of Object.entries(e.slots)) {
+      if (!schedMap[dk]) schedMap[dk] = {};
+      for (const sk of slotKeys) {
+        if (!schedMap[dk][sk]) schedMap[dk][sk] = [];
+        schedMap[dk][sk].push(e.name);
+      }
+    }
+  }
+
+  const allDates = Object.keys(schedMap).sort();
+  document.getElementById('statDays').textContent = allDates.length;
+  
+  let totalSlots = 0;
+  allDates.forEach(dk => totalSlots += Object.keys(schedMap[dk]).length);
+  document.getElementById('statSlots').textContent = totalSlots;
+
+  if (!allDates.length) {
+    document.getElementById('adminScheduleGrid').innerHTML = 
+      '<p style="color:#6a5d4a;font-size:13px">本月尚無報名資料</p>';
+    return;
+  }
+
+  let html = '';
+  for (const dk of allDates) {
+    const [y, m, d] = dk.split('-').map(Number);
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
+    const slots = isWeekend ? SLOTS_WEEKEND : SLOTS_WEEKDAY;
+    const dayZH = DAY_NAMES_ZH[dayOfWeek];
+    const dayEn = DAY_NAMES_EN[dayOfWeek];
+
+    html += `<div class="schedule-date-block">
+      <div class="schedule-date-header">
+        <span class="schedule-date-label">${m}月${d}日（${dayZH}）</span>
+        <span class="schedule-day-en">${dayEn}</span>
+      </div>
+      <div class="schedule-slots">`;
+
+    for (const slot of slots) {
+      const names = (schedMap[dk][slot.key] || []);
+      html += `<div class="schedule-slot-row">
+        <div class="schedule-slot-time">${slot.label}</div>
+        <div class="schedule-slot-names">
+          ${names.length ? names.map(n => `<span class="singer-tag">${n}</span>`).join('') : '<span style="font-size:10px;color:#3a3020">—</span>'}
+        </div>
+      </div>`;
+    }
+
+    html += `</div></div>`;
+  }
+
+  document.getElementById('adminScheduleGrid').innerHTML = html;
+}
+
+function adminCopyAll() {
+  const monthKey = `${adminYear}-${String(adminMonth).padStart(2,'0')}`;
+  const entries = submissions[monthKey] || [];
+  if (!entries.length) { showToast('本月尚無資料'); return; }
+
+  // Build text
+  const schedMap = {};
+  for (const e of entries) {
+    for (const [dk, slotKeys] of Object.entries(e.slots)) {
+      if (!schedMap[dk]) schedMap[dk] = {};
+      for (const sk of slotKeys) {
+        if (!schedMap[dk][sk]) schedMap[dk][sk] = [];
+        schedMap[dk][sk].push(e.name);
+      }
+    }
+  }
+
+  let text = `=== ${adminYear}年${adminMonth}月 DS歌手排班 ===\n\n`;
+  for (const dk of Object.keys(schedMap).sort()) {
+    const [y, m, d] = dk.split('-').map(Number);
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
+    const slots = isWeekend ? SLOTS_WEEKEND : SLOTS_WEEKDAY;
+    const dayZH = DAY_NAMES_ZH[dayOfWeek];
+    text += `【${m}/${d}（${dayZH}）】\n`;
+    for (const slot of slots) {
+      const names = schedMap[dk][slot.key] || [];
+      text += `  ${slot.label}：${names.length ? names.join('、') : '—'}\n`;
+    }
+    text += '\n';
+  }
+
+  navigator.clipboard.writeText(text).then(() => showToast('已複製完整排班資料！'));
+}
+
+function adminCopyCSV() {
+  const monthKey = `${adminYear}-${String(adminMonth).padStart(2,'0')}`;
+  const entries = submissions[monthKey] || [];
+  if (!entries.length) { showToast('本月尚無資料'); return; }
+
+  let csv = '姓名,IG帳號,手機,時段\n';
+  for (const e of entries) {
+    const slots = [];
+    for (const [dk, keys] of Object.entries(e.slots)) {
+      const [y, m, d] = dk.split('-').map(Number);
+      const dow = new Date(y, m - 1, d).getDay();
+      const isW = dow === 5 || dow === 6;
+      const slotDefs = isW ? SLOTS_WEEKEND : SLOTS_WEEKDAY;
+      const dayZH = DAY_NAMES_ZH[dow];
+      for (const k of keys) {
+        const s = slotDefs.find(x => x.key === k);
+        if (s) slots.push(`${m}/${d}(${dayZH})${s.label}`);
+      }
+    }
+    csv += `"${e.name}","${e.ig}","${e.phone}","${slots.join(' | ')}"\n`;
+  }
+
+  navigator.clipboard.writeText(csv).then(() => showToast('已複製 CSV 格式！'));
+}
+
+function clearMonthData() {
+  if (!confirm(`確定要清除 ${adminYear}年${adminMonth}月 的所有報名資料嗎？`)) return;
+  const monthKey = `${adminYear}-${String(adminMonth).padStart(2,'0')}`;
+  delete submissions[monthKey];
+  try { localStorage.setItem('ds_submissions', JSON.stringify(submissions)); } catch(e) {}
+  renderAdmin();
+  showToast('已清除本月資料');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── INIT ─────────────────────────────────
+try {
+  const saved = localStorage.getItem('ds_submissions');
+  if (saved) submissions = JSON.parse(saved);
+} catch(e) {}
+
+initMonths();
+</script>
+</body>
+</html>
