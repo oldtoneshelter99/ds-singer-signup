@@ -789,7 +789,7 @@ textarea { resize: vertical; min-height: 80px; }
     <div class="divider"></div>
     <p class="hero-sub">
       歡迎大家踴躍報名 ヾ(*°▽°*)ノ<br>
-      報名截止：每月 <strong id="deadlineLabel">22</strong> 號，班表預計 <strong id="releaseLabel">25</strong> 號發佈
+      報名截止：每月 <strong id="deadlineLabel">25</strong> 號，班表預計 <strong id="releaseLabel">26</strong> 號發佈
     </p>
 
   </div>
@@ -809,6 +809,13 @@ textarea { resize: vertical; min-height: 80px; }
       <div class="error-msg" id="err-phone">請填寫有效的手機號碼</div>
     </div>
 
+    <!-- 3. 身分證字號 -->
+    <div class="field">
+      <label>身分證字號 <span class="req">*</span></label>
+      <input type="text" id="f-idno" placeholder="A123456789" maxlength="10" style="text-transform:uppercase" />
+      <div class="error-msg" id="err-idno">請填寫有效的身分證字號</div>
+    </div>
+
     <!-- 3. IG -->
     <div class="field">
       <label>IG 帳號 <span class="req">*</span> <span class="hint">請填完整帳號（含 @）</span></label>
@@ -818,9 +825,16 @@ textarea { resize: vertical; min-height: 80px; }
 
     <!-- 4. 影片連結 -->
     <div class="field">
-      <label>演出影片連結 <span class="req">*</span> <span class="hint">請確保連結可開啟</span></label>
+      <label>演出影片連結 <span class="hint">（選填）YouTube / IG / TikTok 均可</span></label>
       <input type="url" id="f-video" placeholder="https://..." />
-      <div class="error-msg" id="err-video">請填寫影片連結</div>
+      <div class="error-msg" id="err-video">連結格式不正確，請以 https:// 開頭</div>
+    </div>
+
+    <!-- 4b. 形象照片連結 -->
+    <div class="field">
+      <label>形象照片連結 <span class="hint">（選填）限動宣傳用，Google Drive / IG 均可</span></label>
+      <input type="url" id="f-photo" placeholder="https://..." />
+      <div class="error-msg" id="err-photo">連結格式不正確，請以 https:// 開頭</div>
     </div>
 
     <!-- 5. 可演出時段 -->
@@ -1149,13 +1163,19 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQNJLHmeqEtvmR
 async function submitForm() {
   const nameOk = validateField('f-name', 'err-name', v => v.length > 0);
   const phoneOk = validateField('f-phone', 'err-phone', v => /^09\d{8}$/.test(v.replace(/[-\s]/g,'')));
+  const idnoOk = validateField('f-idno', 'err-idno', v => /^[A-Za-z][12]\d{8}$/.test(v.trim()));
   const igOk = validateField('f-ig', 'err-ig', v => v.length > 0);
-  const videoOk = validateField('f-video', 'err-video', v => v.startsWith('http'));
+  // 影片連結：選填，有填才驗格式
+  const videoVal = document.getElementById('f-video').value.trim();
+  const videoOk = validateField('f-video', 'err-video', v => v === '' || v.startsWith('http'));
+  // 形象照片：選填，有填才驗格式
+  const photoVal = document.getElementById('f-photo').value.trim();
+  const photoOk = validateField('f-photo', 'err-photo', v => v === '' || v.startsWith('http'));
   
   const hasSlots = Object.keys(selectedSlots).length > 0;
   document.getElementById('err-slots').classList.toggle('show', !hasSlots);
   
-  if (!nameOk || !phoneOk || !igOk || !videoOk || !hasSlots) {
+  if (!nameOk || !phoneOk || !idnoOk || !igOk || !videoOk || !photoOk || !hasSlots) {
     const firstErr = document.querySelector('.error-msg.show');
     if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
@@ -1177,8 +1197,10 @@ async function submitForm() {
   const entry = {
     name: document.getElementById('f-name').value.trim(),
     phone: document.getElementById('f-phone').value.trim(),
+    idno: document.getElementById('f-idno').value.trim().toUpperCase(),
     ig: document.getElementById('f-ig').value.trim(),
     video: document.getElementById('f-video').value.trim(),
+    photo: document.getElementById('f-photo').value.trim(),
     slots: slotTexts.join(' | '),
     note: document.getElementById('f-note').value.trim(),
   };
@@ -1221,7 +1243,7 @@ async function submitForm() {
 function resetForm() {
   document.getElementById('mainForm').classList.remove('hidden');
   document.getElementById('successScreen').classList.remove('show');
-  ['f-name','f-phone','f-ig','f-video','f-note'].forEach(id => {
+  ['f-name','f-phone','f-idno','f-ig','f-video','f-photo','f-note'].forEach(id => {
     document.getElementById(id).value = '';
     document.getElementById(id).classList.remove('error');
   });
@@ -1341,7 +1363,7 @@ function adminCopyCSV() {
   const entries = submissions[monthKey] || [];
   if (!entries.length) { showToast('本月尚無資料'); return; }
 
-  let csv = '姓名,IG帳號,手機,時段\n';
+  let csv = '姓名,IG帳號,手機,身分證字號,影片連結,形象照片,時段\n';
   for (const e of entries) {
     const slots = [];
     for (const [dk, keys] of Object.entries(e.slots)) {
@@ -1355,7 +1377,7 @@ function adminCopyCSV() {
         if (s) slots.push(`${m}/${d}(${dayZH})${s.label}`);
       }
     }
-    csv += `"${e.name}","${e.ig}","${e.phone}","${slots.join(' | ')}"\n`;
+    csv += `"${e.name}","${e.ig}","${e.phone}","${e.idno||''}","${e.video||''}","${e.photo||''}","${slots.join(' | ')}"\n`;
   }
 
   navigator.clipboard.writeText(csv).then(() => showToast('已複製 CSV 格式！'));
