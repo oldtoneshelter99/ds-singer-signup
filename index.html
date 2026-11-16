@@ -960,7 +960,15 @@ const SLOTS_FRI_SAT = [
   { key: 'D', label: '23:30–00:30', sub: '最終場' },
 ];
 
-function getSlotsForDay(dayOfWeek) {
+// 特定日期例外時段（覆蓋該日的星期預設）
+const DATE_OVERRIDES = {
+  '2026-12-31': [
+    { key: 'A', label: '21:00–22:30', sub: '跨年夜・唯一場次' },
+  ],
+};
+
+function getSlotsForDay(dayOfWeek, dateKey) {
+  if (dateKey && DATE_OVERRIDES[dateKey]) return DATE_OVERRIDES[dateKey];
   if (dayOfWeek === 4) return SLOTS_THU;           // 週四
   if (dayOfWeek === 5 || dayOfWeek === 6) return SLOTS_FRI_SAT; // 週五六
   return SLOTS_SUN_WED;                             // 週日〜週三
@@ -1036,7 +1044,7 @@ function renderCalendar() {
     
     const sel = selectedSlots[dateKey] || [];
     const hasSel = sel.length > 0;
-    const slots = getSlotsForDay(dayOfWeek);
+    const slots = getSlotsForDay(dayOfWeek, dateKey);
     
     const dotHtml = slots.map((s, i) => {
       const filled = sel.includes(s.key) ? `style="background:var(--gold);opacity:1"` : '';
@@ -1062,7 +1070,7 @@ function renderCalendar() {
 // ─── SLOT PICKER ──────────────────────────
 function openSlotPicker(dateKey, day, dayOfWeek) {
   currentPickDay = dateKey;
-  const slots = getSlotsForDay(dayOfWeek);
+  const slots = getSlotsForDay(dayOfWeek, dateKey);
   const sel = selectedSlots[dateKey] || [];
   const dayZH = DAY_NAMES_ZH[dayOfWeek];
   
@@ -1125,7 +1133,7 @@ function renderSelectedSlots() {
   for (const dateKey of keys) {
     const [y, m, d] = dateKey.split('-').map(Number);
     const dayOfWeek = new Date(y, m - 1, d).getDay();
-    const slots = getSlotsForDay(dayOfWeek);
+    const slots = getSlotsForDay(dayOfWeek, dateKey);
     const dayZH = DAY_NAMES_ZH[dayOfWeek];
     
     for (const key of (selectedSlots[dateKey] || [])) {
@@ -1186,7 +1194,7 @@ async function submitForm() {
   for (const [dk, keys] of Object.entries(selectedSlots)) {
     const [y, m, d] = dk.split('-').map(Number);
     const dow = new Date(y, m - 1, d).getDay();
-    const slotDefs = getSlotsForDay(dow);
+    const slotDefs = getSlotsForDay(dow, dk);
     const dayZH = DAY_NAMES_ZH[dow];
     for (const k of keys) {
       const s = slotDefs.find(x => x.key === k);
@@ -1295,8 +1303,7 @@ function renderAdmin() {
   for (const dk of allDates) {
     const [y, m, d] = dk.split('-').map(Number);
     const dayOfWeek = new Date(y, m - 1, d).getDay();
-    const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
-    const slots = isWeekend ? SLOTS_WEEKEND : SLOTS_WEEKDAY;
+    const slots = getSlotsForDay(dayOfWeek, dk);
     const dayZH = DAY_NAMES_ZH[dayOfWeek];
     const dayEn = DAY_NAMES_EN[dayOfWeek];
 
@@ -1344,8 +1351,7 @@ function adminCopyAll() {
   for (const dk of Object.keys(schedMap).sort()) {
     const [y, m, d] = dk.split('-').map(Number);
     const dayOfWeek = new Date(y, m - 1, d).getDay();
-    const isWeekend = dayOfWeek === 5 || dayOfWeek === 6;
-    const slots = isWeekend ? SLOTS_WEEKEND : SLOTS_WEEKDAY;
+    const slots = getSlotsForDay(dayOfWeek, dk);
     const dayZH = DAY_NAMES_ZH[dayOfWeek];
     text += `【${m}/${d}（${dayZH}）】\n`;
     for (const slot of slots) {
@@ -1369,8 +1375,7 @@ function adminCopyCSV() {
     for (const [dk, keys] of Object.entries(e.slots)) {
       const [y, m, d] = dk.split('-').map(Number);
       const dow = new Date(y, m - 1, d).getDay();
-      const isW = dow === 5 || dow === 6;
-      const slotDefs = isW ? SLOTS_WEEKEND : SLOTS_WEEKDAY;
+      const slotDefs = getSlotsForDay(dow, dk);
       const dayZH = DAY_NAMES_ZH[dow];
       for (const k of keys) {
         const s = slotDefs.find(x => x.key === k);
