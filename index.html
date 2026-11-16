@@ -791,6 +791,7 @@ textarea { resize: vertical; min-height: 80px; }
       歡迎大家踴躍報名 ヾ(*°▽°*)ノ<br>
       報名截止：每月 <strong id="deadlineLabel">22</strong> 號，班表預計 <strong id="releaseLabel">25</strong> 號發佈
     </p>
+    <p class="hero-sub" id="heroSpecialNote" style="display:none;margin-top:8px"></p>
 
   </div>
 
@@ -963,7 +964,7 @@ const SLOTS_FRI_SAT = [
 // 特定日期例外時段（覆蓋該日的星期預設）
 const DATE_OVERRIDES = {
   '2026-12-31': [
-    { key: 'A', label: '21:00–22:30', sub: '跨年夜・唯一場次' },
+    { key: 'A', label: '20:30–22:30', sub: '跨年夜・唯一場次' },
   ],
 };
 
@@ -1002,6 +1003,14 @@ function updateLabels() {
   const heroLabel = `${calYear} ${monthZH[calMonth-1]}月`;
   document.getElementById('calMonthLabel').textContent = label;
   document.getElementById('heroMonth').textContent = heroLabel;
+
+  const noteEl = document.getElementById('heroSpecialNote');
+  if (calYear === 2026 && calMonth === 12) {
+    noteEl.textContent = '2026 最後一個月！謝謝大家這一年來的陪伴 🥂';
+    noteEl.style.display = '';
+  } else {
+    noteEl.style.display = 'none';
+  }
 
   document.getElementById('adminMonthDisplay').textContent = `${adminYear}年${adminMonth}月`;
 }
